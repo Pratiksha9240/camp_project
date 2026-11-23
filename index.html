@@ -1,0 +1,1371 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasure Island Adventure | Alphagen Learning</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+  --purple:#5e48c4;
+  --purple-dark:#4835a9;
+  --pale:#ebe7ff;
+  --ghost:#f7f5ff;
+  --yellow:#ffd071;
+  --ink:#28243c;
+  --green:#18845c;
+  --red:#c64b58;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#17112d;
+  font-family:Poppins,sans-serif;
+  color:var(--ink);
+  padding:12px;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+header{
+  max-width:1350px;
+  margin:0 auto 12px;
+  padding:13px 19px;
+  border-radius:13px;
+  background:var(--purple);
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  background:var(--yellow);
+  color:#242039;
+  border-radius:8px;
+  padding:9px 12px;
+  font-size:10px;
+  font-weight:800;
+}
+.brand-name{font-size:16px;font-weight:800}
+.progress{
+  background:var(--purple-dark);
+  border-radius:9px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:700;
+}
+.progress strong{color:var(--yellow)}
+main{
+  max-width:1350px;
+  min-height:710px;
+  margin:auto;
+  background:white;
+  border-radius:22px;
+  padding:24px 28px;
+}
+.slide{display:none}
+.slide.active{display:block}
+.center{
+  min-height:640px;
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.center:not(.active){display:none!important}
+h1{font-size:40px;margin:14px 0 8px}
+h1 span{color:var(--purple)}
+.subtitle{
+  font-size:13px;
+  color:#666;
+  max-width:570px;
+  line-height:1.9;
+}
+.tag{
+  display:inline-block;
+  background:var(--ghost);
+  color:var(--purple);
+  border:1px solid var(--pale);
+  padding:8px 12px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:800;
+}
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-size:12px;
+  font-weight:800;
+}
+.primary{background:var(--purple);color:white}
+.yellow{background:var(--yellow);color:var(--ink)}
+.light{
+  background:var(--ghost);
+  color:var(--purple);
+  border:1px solid var(--pale);
+}
+.topline,.bottomline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.workspace{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin:16px 0;
+}
+.panel{
+  min-width:0;
+  border:2px solid var(--pale);
+  border-radius:16px;
+  padding:16px;
+}
+.panel h2{
+  font-size:20px;
+  margin:0 0 8px;
+}
+.task{
+  font-size:12px;
+  line-height:1.85;
+  color:#55516b;
+  margin:0 0 12px;
+}
+.small-heading{
+  color:var(--purple);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:8px;
+}
+.visual{
+  background:var(--ghost);
+  border:1px solid var(--pale);
+  border-radius:13px;
+  padding:11px;
+}
+.game{
+  position:relative;
+  height:310px;
+  overflow:hidden;
+  border-radius:12px;
+  background:
+    radial-gradient(ellipse at 50% 49%,#e8c87c 0 29%,transparent 30%),
+    radial-gradient(ellipse at 50% 49%,#6dbe72 0 38%,transparent 39%),
+    linear-gradient(145deg,#71d6e9,#268fbf);
+}
+.game:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    12deg,
+    transparent 0 35px,
+    #ffffff10 36px 39px
+  );
+}
+.game-object{
+  position:absolute;
+  z-index:2;
+  transition:all .7s ease;
+  user-select:none;
+}
+.player{
+  font-size:35px;
+  left:17%;
+  top:65%;
+  filter:drop-shadow(0 3px 2px #0004);
+}
+.palm{font-size:48px}
+.temple{font-size:54px;right:17%;top:24%}
+.chest{font-size:37px}
+.boat{font-size:48px;right:5%;bottom:6%}
+.bridge{
+  width:100px;
+  height:22px;
+  left:37%;
+  top:50%;
+  border:4px solid #8a5738;
+  border-radius:5px;
+  background:repeating-linear-gradient(
+    90deg,#b9864f 0 15px,#79502e 16px 19px
+  );
+  transform:rotate(-18deg);
+}
+.game-label{
+  position:absolute;
+  z-index:3;
+  background:#fffdf1;
+  border:1px solid #e9d18b;
+  border-radius:8px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:800;
+}
+.hud{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  flex-wrap:wrap;
+  padding:8px;
+  background:#ffffffeb;
+  border-bottom:1px solid #ddd;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:5;
+}
+.hud span{
+  font-size:10px;
+  font-weight:800;
+  color:var(--purple);
+}
+.scene-message{
+  min-height:35px;
+  margin-top:10px;
+  text-align:center;
+  color:var(--purple-dark);
+  font-size:12px;
+  font-weight:800;
+}
+.game-result{
+  background:#fff2c8;
+  border:1px solid var(--yellow);
+  border-radius:10px;
+  padding:10px;
+  text-align:center;
+  margin-top:8px;
+  font-size:11px;
+  font-weight:700;
+}
+.game-result strong{
+  color:var(--purple);
+  display:block;
+  margin-top:4px;
+  font-size:15px;
+  overflow-wrap:anywhere;
+}
+.editor{
+  width:100%;
+  min-height:375px;
+  background:#10182b;
+  color:#edf4ff;
+  border:0;
+  outline:0;
+  border-radius:11px;
+  padding:14px;
+  resize:vertical;
+  font:11.5px/1.8 "Fira Code",monospace;
+  tab-size:4;
+}
+.input-box{
+  background:var(--ghost);
+  border:1px solid var(--pale);
+  border-radius:10px;
+  padding:10px;
+  margin-top:9px;
+}
+.input-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.field label{
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+.field input{
+  width:100%;
+  border:1px solid #c7c0e7;
+  border-radius:8px;
+  padding:8px;
+  font-size:11px;
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.output{
+  background:#10182b;
+  color:#eaf0ff;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+  min-height:70px;
+  max-height:170px;
+  overflow:auto;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:11px/1.8 "Fira Code",monospace;
+}
+.feedback{
+  font-size:11px;
+  font-weight:700;
+  min-height:25px;
+  margin-top:9px;
+}
+.feedback.good{color:var(--green)}
+.feedback.bad{color:var(--red)}
+.save-tip{
+  margin-top:9px;
+  color:#666;
+  font-size:10px;
+  line-height:1.7;
+}
+.mission-map{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:15px 0;
+}
+.map-dot{
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:800;
+  border:2px solid var(--pale);
+  color:#aaa;
+  background:#fafafa;
+}
+.map-dot.current{
+  background:var(--yellow);
+  color:var(--ink);
+  border-color:#e6b847;
+}
+.map-dot.done{
+  background:var(--purple);
+  color:white;
+  border-color:var(--purple);
+}
+.navigation{
+  max-width:1350px;
+  margin:12px auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.nav-btn{
+  background:#291c61;
+  color:var(--yellow);
+  border:2px solid var(--purple);
+  border-radius:10px;
+  padding:10px 18px;
+  font-size:12px;
+  font-weight:800;
+}
+.nav-info{color:white;font-size:12px}
+.hidden-object{opacity:0;pointer-events:none}
+.revealed{opacity:1}
+.sparkle{animation:pop .5s ease}
+@keyframes pop{
+  from{transform:scale(.5);opacity:.2}
+  to{transform:scale(1);opacity:1}
+}
+@media(max-width:900px){
+  .workspace{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  main{padding:16px}
+  h1{font-size:29px}
+  .brand-name{font-size:12px}
+  .nav-info{display:none}
+  .panel{padding:12px}
+  .editor{font-size:11px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">ALPHAGEN LEARNING</span>
+    <span class="brand-name">Treasure Island Adventure</span>
+  </div>
+  <div class="progress">
+    Missions Completed: <strong id="progress">0</strong> / 6
+  </div>
+</header>
+
+<main>
+  <section id="intro" class="slide active center">
+    <span class="tag">PYTHON GAME DEVELOPMENT</span>
+    <h1>Treasure Island <span>Adventure</span></h1>
+    <p class="subtitle">
+      An island is waiting to be explored.
+      Build your own Python adventure game, one mission at a time.
+    </p>
+    <div style="font-size:85px;margin:20px 0">🏝️</div>
+    <button class="btn yellow" onclick="start()">
+      Begin Adventure →
+    </button>
+  </section>
+
+  <section id="mission" class="slide">
+    <div class="topline">
+      <span class="tag" id="missionCounter"></span>
+      <span class="tag" id="concept"></span>
+    </div>
+
+    <div class="mission-map" id="missionMap"></div>
+
+    <div class="workspace">
+      <div class="panel">
+        <h2 id="missionTitle"></h2>
+        <p class="task" id="missionTask"></p>
+
+        <div class="small-heading">Game Preview</div>
+        <div class="visual">
+          <div class="game" id="game">
+            <div class="hud">
+              <span id="hudName">Player: —</span>
+              <span id="hudCoins">Coins: 0</span>
+              <span id="hudEnergy">Energy: 100</span>
+            </div>
+
+            <div class="game-object palm" style="left:12%;top:23%">🌴</div>
+            <div class="game-object palm" style="right:8%;bottom:13%">🌴</div>
+            <div class="game-object palm" style="left:66%;top:10%">🌴</div>
+
+            <div class="game-object player" id="player">🧍</div>
+            <div class="game-object bridge hidden-object" id="bridge"></div>
+            <div class="game-object temple hidden-object" id="temple">🏛️</div>
+
+            <div class="game-object chest hidden-object" id="chest1" style="left:30%;top:31%">🎁</div>
+            <div class="game-object chest hidden-object" id="chest2" style="left:51%;top:30%">🎁</div>
+            <div class="game-object chest hidden-object" id="chest3" style="left:70%;top:45%">🎁</div>
+
+            <div class="game-object boat hidden-object" id="boat">⛵</div>
+
+            <div class="game-label" id="locationLabel" style="left:8%;bottom:7%">
+              Starting Beach
+            </div>
+          </div>
+
+          <div class="scene-message" id="sceneMessage">
+            Complete the mission to begin.
+          </div>
+          <div class="game-result">
+            PROGRAM RESULT
+            <strong id="gameResult">Waiting...</strong>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn light" onclick="replay()">
+            ↻ Replay Animation
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="small-heading">Your Python Game Code</div>
+        <textarea id="editor" class="editor" spellcheck="false"></textarea>
+
+        <div class="input-box">
+          <div class="small-heading">Test Your Game</div>
+          <div class="input-grid" id="inputGrid"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="runBtn" onclick="runCode()">
+            ▶ Run Code
+          </button>
+          <button class="btn yellow" id="copyBtn" onclick="copyCode()">
+            📋 Copy Code
+          </button>
+          <button class="btn light" onclick="resetCode()">
+            ↻ Reset
+          </button>
+        </div>
+
+        <div class="save-tip">
+          Copy your complete Python code and paste it into CodeHS to save your game.
+        </div>
+
+        <div class="output" id="output">
+          Python output will appear here...
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+
+    <div class="bottomline">
+      <span class="tag" id="missionHint"></span>
+      <button class="btn primary" id="nextBtn"
+        onclick="nextMission()" disabled>
+        Next Mission →
+      </button>
+    </div>
+  </section>
+
+  <section id="finish" class="slide center">
+    <span class="tag">ADVENTURE COMPLETED</span>
+    <h1>You Built a <span>Python Game!</span></h1>
+    <div style="font-size:75px;margin:15px">🏆</div>
+    <p class="subtitle">
+      Your Treasure Island game is complete.
+      Copy the final code and save it in CodeHS.
+    </p>
+    <div class="actions">
+      <button class="btn yellow" onclick="copyCode()">
+        📋 Copy Complete Game Code
+      </button>
+      <button class="btn primary" onclick="restart()">
+        Play Again ↻
+      </button>
+    </div>
+  </section>
+</main>
+
+<div class="navigation">
+  <button class="nav-btn" id="prevNav" onclick="previous()" disabled>
+    ← Previous
+  </button>
+  <span class="nav-info" id="navInfo">Treasure Island Adventure</span>
+  <button class="nav-btn" id="nextNav" onclick="forward()">
+    Next →
+  </button>
+</div>
+
+<script>
+"use strict";
+
+const $=id=>document.getElementById(id);
+
+const missions=[
+{
+  title:"Welcome to Treasure Island",
+  concept:"Variables + Input",
+  task:"Create your adventurer! Ask for the player's name. Store the starting coins as 0 and energy as 100. Print the player's name, coins and energy in the format shown in the starter comments.",
+  hint:"Create the player's starting information",
+  starter:`# TREASURE ISLAND ADVENTURE
+
+# Mission 1: Player Setup
+
+# Ask for the player's name
+# Create variables: coins = 0, energy = 100
+
+# Print exactly:
+# Player: Alex
+# Coins: 0
+# Energy: 100
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"],["Maya"]],
+  expected:v=>[
+    `Player: ${v[0]}`,
+    "Coins: 0",
+    "Energy: 100"
+  ]
+},
+{
+  title:"Explore the Jungle",
+  concept:"For Loop + Operators",
+  task:"The jungle has 5 checkpoints. At each checkpoint, collect 10 coins. Use a for loop to visit all five checkpoints and update the coins variable. Print the checkpoint number and total coins after each visit.",
+  hint:"Repeat coin collection five times",
+  starter:`
+
+# Mission 2: Jungle Exploration
+
+# Use a for loop for 5 checkpoints
+# Add 10 coins at every checkpoint
+
+# Print:
+# Checkpoint 1: 10 coins
+# Checkpoint 2: 20 coins
+# ...
+# Checkpoint 5: 50 coins
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"]],
+  expected:v=>[
+    ...missions[0].expected(v),
+    ...Array.from({length:5},(_,i)=>
+      `Checkpoint ${i+1}: ${(i+1)*10} coins`
+    )
+  ]
+},
+{
+  title:"Cross the Dangerous River",
+  concept:"If-Else + Comparison",
+  task:"A bridge requires at least 30 coins. If you have enough coins, cross the bridge and print 'Bridge crossed'. Otherwise, take the forest route, lose 20 energy, and print 'Forest route'.",
+  hint:"Check whether coins are at least 30",
+  starter:`
+
+# Mission 3: River Crossing
+
+# If coins >= 30:
+#     print "Bridge crossed"
+# Otherwise:
+#     subtract 20 energy
+#     print "Forest route"
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"]],
+  expected:v=>[
+    ...missions[1].expected(v),
+    "Bridge crossed"
+  ]
+},
+{
+  title:"Unlock the Ancient Temple",
+  concept:"If-Elif-Else + AND",
+  task:"The temple opens only if you have at least 20 coins AND at least 50 energy. If both are enough, print 'Temple unlocked'. If coins are too low, print 'Not enough coins'. Otherwise, print 'Not enough energy'.",
+  hint:"Check both requirements",
+  starter:`
+
+# Mission 4: Ancient Temple
+
+# Use if, elif and else
+# Check coins and energy
+
+# Possible outputs:
+# Temple unlocked
+# Not enough coins
+# Not enough energy
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"]],
+  expected:v=>[
+    ...missions[2].expected(v),
+    "Temple unlocked"
+  ]
+},
+{
+  title:"Open the Treasure Chests",
+  concept:"For Loop + Arithmetic",
+  task:"There are 3 treasure chests. Each chest contains 25 coins. Use a for loop to open all three chests, add the rewards to your existing coins, and print the total after each chest.",
+  hint:"Open three chests using a loop",
+  starter:`
+
+# Mission 5: Treasure Chamber
+
+# Use a for loop to open 3 chests
+# Each chest contains 25 coins
+
+# Print:
+# Chest 1: 75 coins
+# Chest 2: 100 coins
+# Chest 3: 125 coins
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"]],
+  expected:v=>[
+    ...missions[3].expected(v),
+    "Chest 1: 75 coins",
+    "Chest 2: 100 coins",
+    "Chest 3: 125 coins"
+  ]
+},
+{
+  title:"Escape Treasure Island",
+  concept:"Logical Operators + Conditions",
+  task:"To escape, you need at least 100 coins AND at least 50 energy. If both conditions are true, print 'Island escaped'. Otherwise, print 'Escape failed'.",
+  hint:"Combine two conditions with AND",
+  starter:`
+
+# Mission 6: Island Escape
+
+# Check if coins >= 100 AND energy >= 50
+
+# Print:
+# Island escaped
+# OR
+# Escape failed
+`,
+  inputs:[
+    {label:"Player name",value:"Alex",type:"text"}
+  ],
+  tests:[["Alex"],["Sam"]],
+  expected:v=>[
+    ...missions[4].expected(v),
+    "Island escaped"
+  ]
+}
+];
+
+let current=-1;
+let completed=new Set();
+let savedCode={};
+let lastRun={};
+let running=false;
+let worker=null;
+let requestId=0;
+let pending=new Map();
+let timers=[];
+let animationToken=0;
+
+function schedule(fn,ms){
+  const token=animationToken;
+  timers.push(setTimeout(()=>{
+    if(token===animationToken)fn();
+  },ms));
+}
+function stopAnimation(){
+  animationToken++;
+  timers.forEach(clearTimeout);
+  timers=[];
+}
+function show(id){
+  document.querySelectorAll(".slide").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+  updateNav();
+}
+function start(){current=0;render()}
+
+function getBaseCode(index){
+  let code=missions[0].starter;
+  for(let i=1;i<=index;i++){
+    code+="\n"+missions[i].starter;
+  }
+  return code;
+}
+function renderMap(){
+  $("missionMap").innerHTML=missions.map((_,i)=>{
+    const cls=completed.has(i)?"done":i===current?"current":"";
+    return `<div class="map-dot ${cls}" title="Mission ${i+1}">
+      ${completed.has(i)?"✓":i+1}
+    </div>`;
+  }).join("");
+}
+function renderInputs(){
+  const grid=$("inputGrid");
+  grid.replaceChildren();
+  missions[current].inputs.forEach((field,i)=>{
+    const div=document.createElement("div");
+    div.className="field";
+    const label=document.createElement("label");
+    label.htmlFor=`testInput${i}`;
+    label.textContent=field.label;
+    const input=document.createElement("input");
+    input.id=`testInput${i}`;
+    input.type=field.type;
+    input.value=field.value;
+    div.append(label,input);
+    grid.append(div);
+  });
+}
+function values(){
+  return missions[current].inputs.map((_,i)=>$(`testInput${i}`).value.trim());
+}
+function render(){
+  stopAnimation();
+  if(current<0){show("intro");return}
+  if(current>=missions.length){finish();return}
+
+  const m=missions[current];
+  $("missionCounter").textContent=`Mission ${current+1} of 6`;
+  $("concept").textContent=m.concept;
+  $("missionTitle").textContent=m.title;
+  $("missionTask").textContent=m.task;
+  $("missionHint").textContent=m.hint;
+
+  if(savedCode[current]!==undefined){
+    $("editor").value=savedCode[current];
+  }else if(current===0){
+    $("editor").value=missions[0].starter;
+  }else{
+    const previousCode=savedCode[current-1]??getBaseCode(current-1);
+    $("editor").value=previousCode+"\n"+m.starter;
+  }
+
+  savedCode[current]=$("editor").value;
+  $("output").textContent="Python output will appear here...";
+  $("feedback").textContent="";
+  $("feedback").className="feedback";
+  $("nextBtn").disabled=!completed.has(current);
+  $("nextBtn").textContent=current===5?"Finish Adventure →":"Next Mission →";
+
+  renderMap();
+  renderInputs();
+  resetScene();
+  show("mission");
+}
+
+function resetScene(){
+  stopAnimation();
+
+  $("player").style.left="17%";
+  $("player").style.top="65%";
+  $("player").textContent="🧍";
+
+  ["bridge","temple","chest1","chest2","chest3","boat"].forEach(id=>{
+    $(id).classList.add("hidden-object");
+    $(id).classList.remove("revealed","sparkle");
+  });
+
+  $("hudName").textContent="Player: —";
+  $("hudCoins").textContent="Coins: 0";
+  $("hudEnergy").textContent="Energy: 100";
+  $("locationLabel").textContent="Starting Beach";
+  $("sceneMessage").textContent="Run your code to explore.";
+  $("gameResult").textContent="Waiting...";
+
+  if(current>=2)$("bridge").classList.remove("hidden-object");
+  if(current>=3)$("temple").classList.remove("hidden-object");
+  if(current>=4){
+    ["chest1","chest2","chest3"].forEach(id=>
+      $(id).classList.remove("hidden-object")
+    );
+  }
+  if(current>=5)$("boat").classList.remove("hidden-object");
+}
+
+function setMessage(text){
+  $("sceneMessage").textContent=text;
+}
+function setResult(text){
+  $("gameResult").textContent=text;
+}
+function setCoins(n){
+  $("hudCoins").textContent=`Coins: ${n}`;
+}
+function setEnergy(n){
+  $("hudEnergy").textContent=`Energy: ${n}`;
+}
+
+function animate(record){
+  resetScene();
+
+  if(!record)return;
+
+  const lines=record.output.trim().split(/\r?\n/);
+  const name=record.values[0];
+
+  $("hudName").textContent=`Player: ${name}`;
+  setResult(lines[lines.length-1]||"No output");
+
+  if(current===0){
+    $("player").classList.add("sparkle");
+    setMessage(`${name} has arrived on Treasure Island!`);
+    return;
+  }
+
+  if(current>=1){
+    const checkpoints=lines.filter(x=>/^Checkpoint \d+:/.test(x));
+    checkpoints.forEach((line,i)=>{
+      schedule(()=>{
+        const match=line.match(/^Checkpoint \d+:\s*(\d+)/);
+        if(match)setCoins(match[1]);
+        $("player").style.left=(20+i*12)+"%";
+        $("player").style.top=(63-i*5)+"%";
+        $("locationLabel").textContent=`Jungle checkpoint ${i+1}`;
+        setMessage(`Checkpoint ${i+1} completed!`);
+      },(i+1)*550);
+    });
+  }
+
+  if(current>=2){
+    schedule(()=>{
+      const crossing=lines.find(x=>
+        x==="Bridge crossed"||x==="Forest route"
+      );
+
+      if(crossing==="Bridge crossed"){
+        $("player").style.left="56%";
+        $("player").style.top="43%";
+        $("locationLabel").textContent="Across the River";
+        setMessage("The player crossed the bridge!");
+      }else if(crossing==="Forest route"){
+        $("player").style.left="27%";
+        $("player").style.top="30%";
+        setEnergy(80);
+        setMessage("The player took the forest route.");
+      }
+    },3400);
+  }
+
+  if(current>=3){
+    schedule(()=>{
+      const temple=lines.find(x=>
+        ["Temple unlocked","Not enough coins","Not enough energy"].includes(x)
+      );
+      if(temple==="Temple unlocked"){
+        $("player").style.left="71%";
+        $("player").style.top="27%";
+        $("locationLabel").textContent="Ancient Temple";
+        $("temple").classList.add("sparkle");
+        setMessage("The temple gate is unlocked!");
+      }else{
+        setMessage(temple||"Temple decision not found.");
+      }
+    },4100);
+  }
+
+  if(current>=4){
+    for(let i=1;i<=3;i++){
+      schedule(()=>{
+        const line=lines.find(x=>x.startsWith(`Chest ${i}:`));
+        const match=line?.match(/:\s*(\d+)\s+coins/);
+
+        if(match){
+          setCoins(match[1]);
+          $(`chest${i}`).textContent="💰";
+          $(`chest${i}`).classList.add("sparkle");
+          setMessage(`Treasure chest ${i} opened!`);
+        }
+      },4300+i*650);
+    }
+  }
+
+  if(current>=5){
+    schedule(()=>{
+      const final=lines[lines.length-1];
+      if(final==="Island escaped"){
+        $("player").style.left="87%";
+        $("player").style.top="72%";
+        $("locationLabel").textContent="Escape Boat";
+        setMessage("Treasure collected! Island escaped!");
+      }else{
+        setMessage("The escape conditions were not met.");
+      }
+    },6800);
+  }
+}
+
+function replay(){
+  if(running||current<0||current>=6)return;
+  const record=lastRun[current];
+  if(record)animate(record);
+  else{
+    resetScene();
+    setMessage("Run your Python code first.");
+  }
+}
+
+function resetCode(){
+  if(running||current<0||current>=6)return;
+  $("editor").value=getBaseCode(current);
+  savedCode[current]=$("editor").value;
+  delete lastRun[current];
+  $("output").textContent="Python output will appear here...";
+  $("feedback").textContent="";
+  $("feedback").className="feedback";
+  resetScene();
+}
+
+async function copyCode(){
+  let code;
+
+  if(current>=6){
+    code=savedCode[5]||"";
+  }else if(current>=0){
+    code=$("editor").value;
+    savedCode[current]=code;
+  }else{
+    return;
+  }
+
+  const button=current>=6
+    ?document.querySelector("#finish .yellow")
+    :$("copyBtn");
+
+  try{
+    if(navigator.clipboard&&window.isSecureContext){
+      await navigator.clipboard.writeText(code);
+    }else{
+      const helper=document.createElement("textarea");
+      helper.value=code;
+      helper.style.position="fixed";
+      helper.style.opacity="0";
+      document.body.appendChild(helper);
+      helper.select();
+      const copied=document.execCommand("copy");
+      helper.remove();
+      if(!copied)throw new Error("Copy unavailable");
+    }
+
+    if(button){
+      const old=button.textContent;
+      button.textContent="✓ Copied!";
+      setTimeout(()=>button.textContent=old,1800);
+    }
+  }catch(error){
+    if(current>=0&&current<6){
+      $("editor").focus();
+      $("editor").select();
+      $("feedback").textContent="Select the code and press Ctrl+C to copy.";
+      $("feedback").className="feedback bad";
+    }else{
+      alert("Copy unavailable. Return to Mission 6 to copy the code.");
+    }
+  }
+}
+
+/* Python runs in a Web Worker using Pyodide. */
+const workerSource=`
+let pyodide=null;
+
+async function getPython(){
+  if(!pyodide){
+    importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js");
+    pyodide=await loadPyodide();
+  }
+  return pyodide;
+}
+
+self.onmessage=async event=>{
+  const {id,code,values}=event.data;
+
+  try{
+    const py=await getPython();
+    py.globals.set("_game_payload",JSON.stringify({code,values}));
+
+    let output;
+    try{
+      output=await py.runPythonAsync(\`
+import json
+import io
+import contextlib
+import builtins
+import traceback
+
+payload=json.loads(_game_payload)
+inputs=iter(payload["values"])
+capture=io.StringIO()
+
+def custom_input(prompt=""):
+    try:
+        return next(inputs)
+    except StopIteration:
+        raise EOFError("Not enough input values")
+
+custom_builtins=dict(vars(builtins))
+custom_builtins["input"]=custom_input
+
+scope={
+    "__name__":"__main__",
+    "__builtins__":custom_builtins
+}
+
+try:
+    with contextlib.redirect_stdout(capture):
+        exec(payload["code"],scope)
+except Exception:
+    with contextlib.redirect_stdout(capture):
+        traceback.print_exc(limit=2)
+
+capture.getvalue()
+\`);
+    }finally{
+      py.globals.delete("_game_payload");
+    }
+
+    self.postMessage({id,success:true,output:String(output)});
+  }catch(error){
+    self.postMessage({
+      id,
+      success:false,
+      error:String(error.message||error)
+    });
+  }
+};
+`;
+
+function createWorker(){
+  const blob=new Blob([workerSource],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  const w=new Worker(url);
+  URL.revokeObjectURL(url);
+  return w;
+}
+
+function ensureWorker(){
+  if(worker)return worker;
+  worker=createWorker();
+
+  worker.onmessage=event=>{
+    const {id,success,output,error}=event.data;
+    const p=pending.get(id);
+    if(!p)return;
+
+    clearTimeout(p.timeout);
+    pending.delete(id);
+
+    if(success)p.resolve(output);
+    else p.reject(new Error(error));
+  };
+
+  worker.onerror=event=>{
+    resetWorker(new Error(event.message||"Python failed."));
+  };
+
+  return worker;
+}
+
+function resetWorker(error){
+  if(worker){
+    worker.terminate();
+    worker=null;
+  }
+
+  for(const p of pending.values()){
+    clearTimeout(p.timeout);
+    p.reject(error);
+  }
+
+  pending.clear();
+}
+
+function executePython(code,values){
+  return new Promise((resolve,reject)=>{
+    let w;
+    try{w=ensureWorker()}
+    catch(error){reject(error);return}
+
+    const id=++requestId;
+    const timeout=setTimeout(()=>{
+      resetWorker(new Error("Python timed out. Check for an infinite loop."));
+    },30000);
+
+    pending.set(id,{resolve,reject,timeout});
+    w.postMessage({id,code,values});
+  });
+}
+
+function normalize(text){
+  return String(text).trim().replace(/\r/g,"");
+}
+
+function outputMatches(actual,expected){
+  const lines=normalize(actual).split("\n").map(x=>x.trim());
+  return lines.length===expected.length&&
+    lines.every((line,i)=>line===expected[i]);
+}
+
+function hasConcepts(code,index){
+  const lines=code.split(/\r?\n/)
+    .map(s=>s.trim())
+    .filter(s=>s&&!s.startsWith("#"));
+
+  if(index===0){
+    return /\binput\s*\(/.test(code)&&
+      /\bcoins\s*=/.test(code)&&
+      /\benergy\s*=/.test(code);
+  }
+
+  if(index===1||index===4){
+    return lines.some(s=>/^for\s+.+:/.test(s));
+  }
+
+  if(index===2){
+    return lines.some(s=>/^if\s+.+:/.test(s))&&
+      lines.some(s=>/^else\s*:/.test(s));
+  }
+
+  if(index===3){
+    return lines.some(s=>/^if\s+.+:/.test(s))&&
+      lines.some(s=>/^elif\s+.+:/.test(s))&&
+      lines.some(s=>/^else\s*:/.test(s))&&
+      /\band\b/.test(code);
+  }
+
+  if(index===5){
+    return /\band\b/.test(code)&&
+      lines.some(s=>/^if\s+.+:/.test(s));
+  }
+
+  return true;
+}
+
+async function runCode(){
+  if(running||current<0||current>=6)return;
+
+  const index=current;
+  const mission=missions[index];
+  const code=$("editor").value;
+  const inputValues=values();
+
+  savedCode[index]=code;
+
+  if(inputValues.some(x=>!x)){
+    $("feedback").textContent="Enter the test input.";
+    $("feedback").className="feedback bad";
+    return;
+  }
+
+  if(!hasConcepts(code,index)){
+    $("feedback").textContent="Check the required Python concept for this mission.";
+    $("feedback").className="feedback bad";
+    return;
+  }
+
+  running=true;
+  $("runBtn").disabled=true;
+  $("runBtn").textContent="Running...";
+  $("feedback").textContent="Running your Python game...";
+  $("feedback").className="feedback";
+
+  resetScene();
+  setMessage("Executing your program...");
+
+  try{
+    const output=await executePython(code,inputValues);
+
+    if(current!==index)return;
+
+    $("output").textContent=output||"(No output)";
+
+    const record={output,values:[...inputValues]};
+    lastRun[index]=record;
+    animate(record);
+
+    const visiblePass=outputMatches(
+      output,
+      mission.expected(inputValues)
+    );
+
+    let allPass=visiblePass;
+
+    if(allPass){
+      for(const testValues of mission.tests){
+        const testOutput=await executePython(code,testValues);
+
+        if(!outputMatches(
+          testOutput,
+          mission.expected(testValues)
+        )){
+          allPass=false;
+          break;
+        }
+      }
+    }
+
+    if(current!==index)return;
+
+    if(allPass){
+      const first=!completed.has(index);
+      completed.add(index);
+
+      $("feedback").textContent=
+        "Mission completed! Your Python code passed the tests.";
+      $("feedback").className="feedback good";
+      $("nextBtn").disabled=false;
+
+      if(first&&typeof confetti==="function"){
+        confetti({
+          particleCount:90,
+          spread:75,
+          origin:{y:.65},
+          colors:["#5E48C4","#FFD071","#28B5CB"]
+        });
+      }
+    }else{
+      $("feedback").textContent=visiblePass
+        ?"This input works, but another test failed."
+        :"Check your code and printed output.";
+      $("feedback").className="feedback bad";
+    }
+
+    renderMap();
+    updateNav();
+
+  }catch(error){
+    $("output").textContent=String(error.message||error);
+    $("feedback").textContent="Python could not complete the program.";
+    $("feedback").className="feedback bad";
+  }finally{
+    running=false;
+    $("runBtn").disabled=false;
+    $("runBtn").textContent="▶ Run Code";
+  }
+}
+
+function nextMission(){
+  if(running||current<0||!completed.has(current))return;
+  savedCode[current]=$("editor").value;
+  current++;
+  render();
+}
+function previous(){
+  if(running||current<0)return;
+  if(current<6)savedCode[current]=$("editor").value;
+  current--;
+  render();
+}
+function forward(){
+  if(current===-1){start();return}
+  if(current>=6)return;
+  nextMission();
+}
+function updateNav(){
+  $("prevNav").disabled=current<0;
+  $("nextNav").disabled=current>=6||
+    (current>=0&&!completed.has(current));
+
+  $("navInfo").textContent=current<0
+    ?"Treasure Island Adventure"
+    :current>=6
+      ?"Adventure Complete"
+      :`Mission ${current+1} / 6`;
+
+  $("progress").textContent=completed.size;
+}
+function finish(){
+  current=6;
+  show("finish");
+  if(typeof confetti==="function"){
+    confetti({particleCount:150,spread:90});
+  }
+}
+function restart(){
+  stopAnimation();
+  current=-1;
+  completed.clear();
+  savedCode={};
+  lastRun={};
+  show("intro");
+}
+
+$("editor").addEventListener("input",()=>{
+  if(current>=0&&current<6){
+    savedCode[current]=$("editor").value;
+  }
+});
+$("editor").addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
+    e.preventDefault();
+    e.target.setRangeText(
+      "    ",
+      e.target.selectionStart,
+      e.target.selectionEnd,
+      "end"
+    );
+  }
+});
+
+updateNav();
+</script>
+</body>
+</html>
